@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- meta -->
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta content="" name="keywords">
+  <meta content="" name="description">
+  <title>Sightengine demo - Python and Flask</title>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!-- Bootstrap core CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Material Design Bootstrap -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.4/css/mdb.min.css" rel="stylesheet">
+  <!--<link href="https://mdbootstrap.com/wp-content/themes/mdbootstrap4/css/compiled.min.css?ver=4.5.4" rel="stylesheet">-->
+  <link href="{{ url_for('static', filename='css/mdbpro.min.css') }}" rel="stylesheet">
+
+</head>
+
+<body>
+        
+        <!-- Card Narrower -->
+        <div class="card card-cascade narrower mb-4 mx-auto" style="width:380px; margin-top:7rem;">
+
+          <!-- Card image -->
+          {% if uploaded %}
+          <div class="view view-cascade overlay">
+            <img class="card-img-top" src="{{ url_for('static',filename=filepath) }}" alt="Card image">
+            <a>
+              <div class="mask rgba-white-slight waves-effect waves-light"></div>
+            </a>
+          </div>
+          {% endif %}
+          <!-- Card content -->
+
+          <div class="card-body card-body-cascade">
+              {% if not uploaded %}
+              <div class="view view-cascade gradient-card-header blue-gradient">
+
+                  <!-- Title -->
+                  <h2 class="card-header-title mb-3">IMAGE MODERATION</h2>
+                  <!-- Subtitle -->
+                  <p class="card-header-subtitle mb-0">Upload and analyse</p>
+              
+              </div>
+
+              <form class="md-form" action="/upload" method="post" enctype="multipart/form-data">
+                <div class="file-field">
+                    <a class="btn-floating purple-gradient float-left mt-0 waves-effect waves-light">
+                        <i class="fa fa-paperclip" aria-hidden="true"></i>
+                        <input type="file" name="image">
+                    </a>
+                    <div class="file-path-wrapper">
+                        <input class="file-path validate" type="text" placeholder="Upload your file">
+                    </div>
+                </div>
+                <div style="display:inline-block; margin-top: 2rem; margin-left:8%">
+                <input type="submit" value="Analyse image" class="btn btn-dark btn-block">
+                </div>
+            </form>
+            {% endif %}
+            <hr>
+            
+            {% block body %}
+
+            {% endblock %}
+          </div>
+
+        </div>
+
+  <script type="text/javascript" src="{{ url_for('static', filename='js/mdb.min.js') }}"></script>
+  <!-- JQuery -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <!-- Bootstrap tooltips -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"></script>
+  <!-- Bootstrap core JavaScript -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  <!-- MDB core JavaScript -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.4/js/mdb.min.js"></script>
+</body>
+
+</html>

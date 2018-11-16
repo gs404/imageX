@@ -1,0 +1,184 @@
+{% extends 'index.html' %}
+
+{% block body %}
+<style>
+    .color{display:inline-block; height:30px; width:30px; border-radius: 50%; margin-right: 8px}
+    .chip{margin-bottom: 0.6rem}
+</style>
+
+<!--<div>
+    {{probability}}
+</div>-->
+
+{% if probability['status']!='success' %}
+    
+    <p class="card-text">Could not process image. Retry after some time.</p>
+
+{% else %}
+<div>
+    <h5 style="display:block;"><strong>ADULT CONTENT</strong></h5>
+    {% if probability['nudity']['raw']>=probability['nudity']['safe'] %}
+        <div class="chip waves-effect waves-effect mt-2">
+            raw nudity
+        </div>
+    {% endif %}
+    {% if probability['nudity']['partial']>=probability['nudity']['safe'] %}
+    <div class="chip waves-effect waves-effect mt-2">
+            partial nudity
+    </div>
+    {% endif %}
+    {% if probability['nudity']['safe']>=0.6 %}
+        <div class="chip waves-effect waves-effect mt-2">
+            no nudity
+        </div>
+    {% endif %}
+    {% if 'partial_tag' in probability['nudity'] %}
+    <div class="chip waves-effect waves-effect mt-2">
+        {{ probability['nudity']['partial_tag'] }}
+    </div>
+    {% endif %}
+</div>
+<div>
+    <h5 style="display:block;"><strong>INAPPROPRIATE CONTENT</strong></h5>
+    <div class="chip waves-effect waves-effect mt-2">
+        {% if probability['weapon']>=0.2 %}
+            weapon
+        {% else %}
+            no weapon
+        {% endif %}
+    </div>
+    
+    <div class="chip waves-effect waves-effect mt-2">
+            {% if probability['alcohol']>=0.2 %}
+                alcohol
+            {% else %}
+                no alcohol
+            {% endif %}
+    </div>
+    
+    <div class="chip waves-effect waves-effect mt-2">
+            {% if probability['drugs']>=0.2 %}
+                drugs
+            {% else %}
+                no drugs
+            {% endif %}
+    </div>
+    
+</div>
+<div>
+    <h5 style="display:block;"><strong>FACE DETECTION</strong></h5>
+    {% if 'face' in probability and lf!=0 %}
+        {% if probability['face']['multiple']>=probability['face']['single']%}
+            <div class="chip waves-effect waves-effect mt-2">
+                multiple
+            </div>
+        {% endif %}
+        
+        {% if probability['face']['single']>probability['face']['multiple'] %}
+            <div class="chip waves-effect waves-effect mt-2">
+                single
+            </div>
+        {% endif %}
+    
+    {% elif 'faces' in probability and lf!=0 %}
+        {% for everyvalue in probability['faces']%}
+            {% if 'attributes' in everyvalue %}
+            {% for face,prob in everyvalue['attributes'].items() %}
+                {% if prob>0.6 %}
+                <div class="chip waves-effect waves-effect mt-2">
+                        {{ face }}
+                </div>
+                {% endif %}
+                {% if face=='minor' and prob<=0.2 %}
+                <div class="chip waves-effect waves-effect mt-2">
+                        no minor
+                </div>
+                {% endif %}
+                {% if face=='sunglasses' and prob<=0.2 %}
+                <div class="chip waves-effect waves-effect mt-2">
+                        no sunglasses
+                </div>
+                {% endif %}
+            {% endfor %}
+            {% endif %}
+
+            {% if 'celebrity' in everyvalue %}
+            {% for celeb in everyvalue['celebrity'] %}
+                {% if celeb['prob']>0.6 %}
+                <div class="chip waves-effect waves-effect mt-2">
+                        {{ celeb['name'] }}
+                </div>
+                {% endif %}
+            {% endfor %}
+            {% endif %}
+
+        {% endfor %}
+        
+    {% else %}
+        <div class="chip waves-effect waves-effect mt-2">
+            no faces detected
+        </div>
+    {% endif %}
+</div>
+<div>
+    <h5 style="display:block;"><strong>FRAUD DETECTION</strong></h5>
+    
+    <div class="chip waves-effect waves-effect mt-2">
+            {% if probability['scam']['prob']>=0.65 %}
+                scam detected
+            {% else %}
+                no scam detected
+            {% endif %}
+    </div>
+    
+</div>
+
+{% if 'type' in probability %}
+    <div>
+        <h5 style="display:block;"><strong>TYPE DETECTION</strong></h5>
+        
+            {% if probability['type']['photo']>=probability['type']['illustration'] %}
+            <div class="chip waves-effect waves-effect mt-2">
+                    natural photograph
+            </div>
+            {% endif %}
+            {% if probability['type']['photo']<=probability['type']['illustration'] %}
+            <div class="chip waves-effect waves-effect mt-2">
+                    illustration
+            </div>
+            {% endif %}
+        
+    </div>
+{% endif %}
+
+<div>
+    <h5 style="display:block;"><strong>COLORS</strong></h5>
+    <div class="color mt-2 mb-2" style="background-color: {{ probability['colors']['dominant']['hex'] }}"></div>
+    {% for color in probability['colors']['accent'] %}
+        <div class="color mt-2 mb-2" style="background-color: {{ color['hex'] }}"></div>
+    {% endfor %}
+    {% for color in probability['colors']['other'] %}
+        <div class="color mt-2 mb-2" style="background-color: {{ color['hex'] }}"></div>
+    {% endfor %}
+</div>
+<div>
+    <h5 style="display:block;"><strong>PROPERTIES</strong></h5>
+    {% if 'sharpness' in probability %}
+    <div class="chip waves-effect waves-effect mt-2">
+        sharpness<span class="badge badge-danger ml-2 pt-1">{{probability['sharpness']}}</span>
+    </div>
+    {% endif %}
+    {% if 'brightness' in probability %}
+    <div class="chip waves-effect waves-effect mt-2">
+        brightness<span class="badge badge-danger ml-2 pt-1">{{probability['brightness']}}</span>
+    </div>
+    {% endif %}
+    {% if 'contrast' in probability %}
+    <div class="chip waves-effect waves-effect mt-2">
+        contrast<span class="badge badge-danger ml-2 pt-1">{{probability['contrast']}}</span>
+    </div>
+    {% endif %}
+</div>
+
+{% endif %}
+{% endblock %}
